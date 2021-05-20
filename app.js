@@ -15,16 +15,30 @@ app.use( function(req, res, next) {
 
 })
 
+
 app.use((req, res, next) => {
-  let stime = Date.now()
+  const stime = new Date()
+  res.on("finish", () => {
+    const timediff = Date.now() - stime
+    console.log(`${dateFormat(stime, "yyyy-mm-dd HH:MM:ss")} | ${req.method} from ${req.originalUrl} total time: ${timediff}ms `)
+  })
   next()
-  let etime = Date.now()
-  console.log(`${dateFormat(stime, "yyyy-mm-dd h:MM:ss")} | ${req.method} from ${req.originalUrl} total time: ${etime - stime}ms `)
 })
 
 
 app.get('/', (req, res) => {
-  res.send('列出全部 Todo')
+  res.send(`列出全部 Todo
+  <div class="row">
+  <div class="col auto">
+    <a class="btn btn-secondary" href="/new">Create</a>
+    <a class="btn btn-success" href="/random_id">Show one todo</a>
+    <form action="/" method="POST" style="display: inline;">
+      <div class="input-group-append">
+        <button class="btn btn-success" type="submit">Submit</button>
+      </div>
+    </form>
+  </div>
+  </div>`)
 })
 
 app.get('/new', (req, res) => {
@@ -36,8 +50,9 @@ app.get('/:id', (req, res) => {
 })
 
 app.post('/', (req, res) => {
-  res.send('新增一筆  Todo')
+  res.send(`新增一筆  Todo`)
 })
+
 
 app.listen(port, () => {
   console.log(`App running on port ${port}`)
